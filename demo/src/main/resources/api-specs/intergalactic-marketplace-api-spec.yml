@@ -1,0 +1,421 @@
+openapi: 3.0.0
+info:
+  title: Cosmo Cats Intergalactic Marketplace API
+  description: API for a marketplace that sales space goods
+  version: 1.0.0
+
+servers: # base urls for which Swagger will add the pathes
+  - url: https://intergalactic-marketplace.com/
+    description: Production server # real server address (e.g. somewhere in the cloud)
+  - url: http://localhost:8080/
+    description: Local development server  
+
+security:
+  - oauth2Auth: # all endpoints require authentication 
+    - openid
+    - profile
+    - emails
+
+paths:
+  /v1/products:
+    get: #get all; pagination will be added
+      description: Retrieve a list of all products available in the intergalactic marketplace
+      summary: Get all products
+      tags:
+        - Products
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/CategoryParam' 
+      responses:
+        '200':
+          description: List of all products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetailsListDto'
+        
+        '304': # not modified (caching)
+          description: There are no any changes in products since the last request
+        
+        '401': # when user is ununathorized; or the token is invalid/expired
+          $ref: '#/components/responses/UnauthorizedError'
+          
+        '403':
+          $ref: '#/components/responses/ForbiddenError' 
+
+        '404':
+          description: No products found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'  
+
+        '500': 
+          $ref: '#/components/responses/InternalServerError'         
+
+    post:
+      description: Create a new product in the intergalactic marketplace
+      summary: Create a new product
+      tags:
+        - Products 
+      requestBody:
+        description: Product data to create a new product
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductDetailsDto'
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetailsDto'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        
+        '401': 
+          $ref: '#/components/responses/UnauthorizedError'
+          
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /v1/products/{productId}:
+    get: #get a particular product
+      description: Retrieve information about a specific product in the intergalactic marketplace
+      summary: Get a particular product
+      tags:
+        - Products
+      parameters:
+        - $ref: '#/components/parameters/ProductIdParam'    
+      responses:  
+        '200':
+          description: Get the information about the particular product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetailsDto'
+
+        '304':
+          description: The product has not been modified since the last request
+
+        '401': 
+          $ref: '#/components/responses/UnauthorizedError'
+          
+        '403':
+          $ref: '#/components/responses/ForbiddenError'    
+
+        '404':
+          description: The particular product is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+        '500':
+          $ref: '#/components/responses/InternalServerError'      
+
+    put:
+      description: Update information about a specific product in the intergalactic marketplace
+      summary: Update a particular product
+      tags:
+        - Products
+      parameters:
+        - $ref: '#/components/parameters/ProductIdParam'   
+      requestBody:
+        description: Product data to update the product
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductDetailsDto'   
+      responses:
+        '200':
+          description: The product was updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetailsDto'
+        
+        '201': # resourse dod not exist, so it was created
+          description: The product was created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetailsDto'
+
+        '204': # resourse exist, so it was updated, no content to return
+          description: The product was updated successfully # no content to return
+            
+        '400': 
+          $ref: '#/components/responses/ValidationError'
+
+        '401': 
+          $ref: '#/components/responses/UnauthorizedError'
+          
+        '403':
+          $ref: '#/components/responses/ForbiddenError'    
+
+        '500':
+          $ref: '#/components/responses/InternalServerError'                  
+          
+    delete:
+      description: Delete a specific product from the intergalactic marketplace
+      summary: Delete a particular product
+      tags:
+        - Products
+      parameters:
+        - $ref: '#/components/parameters/ProductIdParam'    
+      responses:
+        '204':
+          description: Product deleted successfully
+
+        '401': 
+          $ref: '#/components/responses/UnauthorizedError'
+          
+        '403':
+          $ref: '#/components/responses/ForbiddenError' 
+
+        '500':
+          $ref: '#/components/responses/InternalServerError'         
+      
+components: #things that are used in different parts of the spec
+  schemas:
+    ProductDetailsDto:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 1
+          description: Name of the product
+          example: "Anti-gravity yarn ball"
+        price:
+          type: number
+          format: double
+          description: Price of the product in USD
+          example: 5.99
+        category:
+          type: string
+          maxLength: 100
+          minLength: 1
+          description: Category of the product
+          example: "weapon" 
+      required:
+        - name
+        - price
+        - category
+
+    ProductDetailsListDto:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number
+          example: 1
+        size:
+          type: integer
+          description: Number of items per page
+          example: 10
+        totalItems:
+          type: integer
+          description: Total number of items available
+          example: 57
+        totalPages:
+          type: integer
+          description: Total number of pages available
+          example: 6      
+        productDetailsEntries:
+          type: array
+          description: List of product details
+          items:
+            $ref: '#/components/schemas/ProductDetailsEntry'
+          example:
+            - id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              name: "Anti-gravity yarn ball"
+              price: 5.99
+              category: "weapon"
+            - id: "7fa85f64-1234-4562-a3fc-2c963f66afb7"
+              name: "Space catnip treat"
+              price: 3.49
+              category: "food"
+            - id: "1fa85f64-9876-4562-c3fc-2c963f66afc8"
+              name: "Rocket-shaped scratching post"
+              price: 19.99
+              category: "toy"
+
+    ProductDetailsEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the product
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        name:
+          type: string
+          description: Name of the product
+          example: "Anti-gravity yarn ball"
+        price:
+          type: number
+          format: double
+          description: Price of the product
+          example: 5.99
+        category:
+          type: string
+          description: Category of the product
+          example: "weapon" 
+
+    ValidationError:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "about:blank"
+        title:
+          type: string
+          example: "Bad Request"
+        status:
+          type: integer
+          example: 400
+        detail:
+          type: string
+          example: "Field 'price' must be greater than 0; field 'name' cannot be empty."
+        instance:
+          type: string
+          example: "/v1/products"
+
+    ErrorResponse:
+      type: object
+      properties:
+        type:
+          type: string
+          description: URI reference identifying the error type
+          example: "/errors/not-found"
+        title:
+          type: string
+          description: A short description of the error
+          example: "Product not found"
+        status:
+          type: integer
+          description: HTTP status code
+          example: 404
+        detail:
+          type: string
+          description: Detailed description of the error
+          example: "The product with ID 12345 could not be found."
+        instance:
+          type: string
+          description: Path or resource where the problem occurred
+          example: "/v1/products/12345"
+
+  securitySchemes:
+    oauth2Auth:
+      type: oauth2
+      flows: 
+        authorizationCode:
+          authorizationUrl: https://auth.cosmocats.com/oauth2/authorize # registered auth server urls
+          tokenUrl: https://auth.cosmocats.com/oauth2/token 
+          scopes:
+            openid: Access to user identity info
+            profile: Access to user profile info # name, email, etc.
+            emails: Access to user email info
+            products:read: Read access to products
+            products:write: Write access to products
+
+  responses:
+    UnauthorizedError:
+      description: Unauthorized - invalid or missing authentication token
+      content:
+        application/problem+json: # MIME type for problem details (problem+json)
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            type: "/errors/unauthorized"
+            title: "Unauthorized"
+            status: 401
+            detail: "Access token is missing, expired, or invalid."
+            path: "/v1/products"
+            timestamp: "2025-10-30T14:25:00Z"
+
+    ForbiddenError:
+      description: Forbidden - insufficient permissions to access this resource
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            type: "/errors/forbidden"
+            title: "Forbidden"
+            status: 403
+            detail: "User does not have permission to delete this product."
+            path: "/v1/products/123"
+            timestamp: "2025-10-30T14:25:00Z"
+
+    ValidationError: # 400 - client lox
+      description: Bad Request - validation error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            status: "400"
+            errors:
+              - fieldName: "price"
+                reason: "Price must be a positive number"
+              - fieldName: "name"
+                reason: "Name cannot be empty or longer than 100 characters"
+
+    InternalServerError: # 500 - server lox
+      description: Internal Server Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            type: "/errors/internal-server-error"
+            title: "Internal Server Error"
+            status: 500
+            detail: "An unexpected error occurred on the server."                    
+
+  parameters:
+    ProductIdParam:
+      description: Unique identifier of the product
+      name: productId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid    
+
+    PageParam: # for pagination
+      description: Page number for pagination 
+      name: page  
+      in: query   
+      required: false
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+
+    SizeParam: # for pagination
+      description: Number of items per page for pagination 
+      name: size  
+      in: query   
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 10
+        maximum: 100  
+
+    CategoryParam:
+      description: Category of the product to filter by
+      name: category
+      in: query
+      required: false
+      schema:
+        type: string
+        example: "weapon"     
