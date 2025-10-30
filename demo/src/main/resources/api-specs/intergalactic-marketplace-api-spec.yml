@@ -33,7 +33,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductDetailsListDto'
+                $ref: '#/components/schemas/ProductListDto'
         
         '304': # not modified (caching)
           description: There are no any changes in products since the last request
@@ -65,14 +65,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProductDetailsDto'
+              $ref: '#/components/schemas/ProductDto'
       responses:
         '201':
           description: Product created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductDetailsDto'
+                $ref: '#/components/schemas/ProductDto'
         '400':
           $ref: '#/components/responses/ValidationError'
         
@@ -96,7 +96,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductDetailsDto'
+                $ref: '#/components/schemas/ProductDto'
 
         '304':
           description: The product has not been modified since the last request
@@ -130,21 +130,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProductDetailsDto'   
+              $ref: '#/components/schemas/ProductDto'   
       responses:
         '200':
           description: The product was updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductDetailsDto'
+                $ref: '#/components/schemas/ProductDto'
         
         '201': # resourse dod not exist, so it was created
           description: The product was created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductDetailsDto'
+                $ref: '#/components/schemas/ProductDto'
 
         '204': # resourse exist, so it was updated, no content to return
           description: The product was updated successfully # no content to return
@@ -183,7 +183,7 @@ paths:
       
 components: #things that are used in different parts of the spec
   schemas:
-    ProductDetailsDto:
+    ProductDto:
       type: object
       properties:
         name:
@@ -208,7 +208,7 @@ components: #things that are used in different parts of the spec
         - price
         - category
 
-    ProductDetailsListDto:
+    ProductListDto:
       type: object
       properties:
         page:
@@ -227,11 +227,11 @@ components: #things that are used in different parts of the spec
           type: integer
           description: Total number of pages available
           example: 6      
-        productDetailsEntries:
+        productEntriesDto:
           type: array
           description: List of product details
           items:
-            $ref: '#/components/schemas/ProductDetailsEntry'
+            $ref: '#/components/schemas/ProductEntryDto'
           example:
             - id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
               name: "Anti-gravity yarn ball"
@@ -246,7 +246,7 @@ components: #things that are used in different parts of the spec
               price: 19.99
               category: "toy"
 
-    ProductDetailsEntry:
+    ProductEntryDto:
       type: object
       properties:
         id:
@@ -338,7 +338,6 @@ components: #things that are used in different parts of the spec
             status: 401
             detail: "Access token is missing, expired, or invalid."
             path: "/v1/products"
-            timestamp: "2025-10-30T14:25:00Z"
 
     ForbiddenError:
       description: Forbidden - insufficient permissions to access this resource
@@ -352,7 +351,6 @@ components: #things that are used in different parts of the spec
             status: 403
             detail: "User does not have permission to delete this product."
             path: "/v1/products/123"
-            timestamp: "2025-10-30T14:25:00Z"
 
     ValidationError: # 400 - client lox
       description: Bad Request - validation error
