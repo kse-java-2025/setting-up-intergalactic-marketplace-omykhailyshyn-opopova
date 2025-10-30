@@ -11,4 +11,13 @@ public class Product {
     String ProductName;
     Double ProductPrice;
     String ProductCategory;
+
+    public static Product create(String name, Double price, String category) {
+        return Product.builder()
+            .productId(UUID.randomUUID())
+            .productName(name)
+            .productPrice(price)
+            .productCategory(category)
+            .build();
+    }
 }
