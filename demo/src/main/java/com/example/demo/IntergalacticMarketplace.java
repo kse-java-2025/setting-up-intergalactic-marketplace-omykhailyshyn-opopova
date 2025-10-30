@@ -7,9 +7,9 @@ import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConf
 import org.springframework.context.annotation.Primary;
 
 @SpringBootApplication(exclude = ErrorMvcAutoConfiguration.class)
-public class IntergalacticMarketplaceApp {
+public class IntergalacticMarketplace {
 
     public static void main(String[] args) {
-        SpringApplication.run(IntergalacticMarketplaceApp.class, args);
+        SpringApplication.run(IntergalacticMarketplace.class, args);
     }
 }

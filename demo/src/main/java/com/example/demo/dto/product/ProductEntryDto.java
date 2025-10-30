@@ -9,8 +9,8 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Jacksonized
 public class ProductEntryDto {
-    UUID id;
-    String name;
-    Double price;
-    String category;
+    UUID ProductId;
+    String ProductName;
+    Double ProductPrice;
+    String ProductCategory;
 }
