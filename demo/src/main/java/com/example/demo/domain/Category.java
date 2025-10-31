@@ -11,11 +11,4 @@ import lombok.Value;
 public class Category {
     UUID CategoryId;
     String CategoryName;
-
-    public static Category create(String name) {
-        return Category.builder()
-            .categoryId(UUID.randomUUID())
-            .categoryName(name)
-            .build();
-    }
 }
