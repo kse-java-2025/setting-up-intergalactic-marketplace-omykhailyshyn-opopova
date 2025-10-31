@@ -12,5 +12,5 @@ public class ProductEntryDto {
     UUID ProductId;
     String ProductName;
     Double ProductPrice;
-    String ProductCategory;
+    UUID ProductCategoryId;
 }

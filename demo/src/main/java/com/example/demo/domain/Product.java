@@ -10,14 +10,14 @@ public class Product {
     UUID ProductId;
     String ProductName;
     Double ProductPrice;
-    String ProductCategory;
+    UUID ProductCategoryId;
 
-    public static Product create(String name, Double price, String category) {
+    public static Product create(String name, Double price, UUID categoryId) {
         return Product.builder()
             .productId(UUID.randomUUID())
             .productName(name)
             .productPrice(price)
-            .productCategory(category)
+            .productCategoryId(categoryId)
             .build();
     }
 }

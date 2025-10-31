@@ -1,9 +1,8 @@
-package com.example.demo.dto.product;
+package com.example.demo.dto.category;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.DecimalMin;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
@@ -11,16 +10,11 @@ import lombok.extern.jackson.Jacksonized;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class ProductDto {
+public class CategoryDto {
+    @NotNull(message = "Parent Category ID is mandatory")
+    UUID ParentCategoryId;
 
     @NotBlank(message = "Name is mandatory")
     @Size(max = 100, message = "Name cannot exceed 100 characters")
-    String ProductName;
-
-    @NotNull(message = "Price is mandatory")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
-    Double ProductPrice;
-
-    @NotNull(message = "Category ID is mandatory")
-    UUID ProductCategoryId;
+    String CategoryName;
 }
