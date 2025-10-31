@@ -11,7 +11,7 @@ import com.example.demo.dto.product.ProductDto;
 @Builder(toBuilder = true)
 public class OrderResponseDto {
     UUID orderId;
-    List<ProductDto> productEntries;
+    List<OrderItemResponseDto> productEntries;
     Double totalPrice;
     OrderStatus orderStatus;
     UUID customerId;
