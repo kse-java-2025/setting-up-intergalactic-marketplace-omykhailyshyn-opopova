@@ -9,6 +9,6 @@ import lombok.Value;
 @Value
 @Builder(toBuilder = true)
 public class Category {
-    UUID CategoryId;
-    String CategoryName;
+    UUID categoryId;
+    String categoryName;
 }

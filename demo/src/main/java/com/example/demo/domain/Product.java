@@ -7,8 +7,8 @@ import lombok.Value;
 @Value
 @Builder(toBuilder = true)
 public class Product {
-    UUID ProductId;
-    String ProductName;
-    Double ProductPrice;
-    UUID ProductCategoryId;
+    UUID productId;
+    String productName;
+    Double productPrice;
+    UUID productCategoryId;
 }

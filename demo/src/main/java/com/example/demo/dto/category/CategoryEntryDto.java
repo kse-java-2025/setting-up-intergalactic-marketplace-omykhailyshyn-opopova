@@ -9,6 +9,6 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Jacksonized
 public class CategoryEntryDto {
-    UUID CategoryId;
-    String CategoryName;
+    UUID categoryId;
+    String categoryName;
 }

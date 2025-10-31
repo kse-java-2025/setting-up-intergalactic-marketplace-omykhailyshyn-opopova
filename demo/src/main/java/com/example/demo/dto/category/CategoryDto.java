@@ -11,10 +11,10 @@ import lombok.extern.jackson.Jacksonized;
 @Builder(toBuilder = true)
 @Jacksonized
 public class CategoryDto {
-    @NotNull(message = "Parent Category ID is mandatory")
-    UUID ParentCategoryId;
+    @NotNull(message = "Category ID is mandatory")
+    UUID categoryId;
 
     @NotBlank(message = "Name is mandatory")
     @Size(max = 100, message = "Name cannot exceed 100 characters")
-    String CategoryName;
+    String categoryName;
 }

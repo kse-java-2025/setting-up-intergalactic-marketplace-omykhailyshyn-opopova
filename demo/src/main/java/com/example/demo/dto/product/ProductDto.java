@@ -15,12 +15,12 @@ public class ProductDto {
 
     @NotBlank(message = "Name is mandatory")
     @Size(max = 100, message = "Name cannot exceed 100 characters")
-    String ProductName;
+    String productName;
 
     @NotNull(message = "Price is mandatory")
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
-    Double ProductPrice;
+    Double productPrice;
 
     @NotNull(message = "Category ID is mandatory")
-    UUID ProductCategoryId;
+    UUID productCategoryId;
 }

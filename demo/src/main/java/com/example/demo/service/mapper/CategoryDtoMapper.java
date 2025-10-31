@@ -10,7 +10,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface CategoryDtoMapper {
-    @Mapping(target = "CategoryId", expression = "java(UUID.randomUUID())")
+    @Mapping(target = "categoryId", expression = "java(UUID.randomUUID())")
     Category toCategory(CategoryDto categoryDto);
 
     CategoryEntryDto toCategoryEntryDto(Category category);
