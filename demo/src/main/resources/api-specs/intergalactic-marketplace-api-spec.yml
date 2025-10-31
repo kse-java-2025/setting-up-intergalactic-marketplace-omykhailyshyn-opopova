@@ -197,16 +197,15 @@ components: #things that are used in different parts of the spec
           format: double
           description: Price of the product in USD
           example: 5.99
-        category:
+        productCategoryId:
           type: string
-          maxLength: 100
-          minLength: 1
-          description: Category of the product
-          example: "weapon" 
+          format: uuid
+          description: Unique identifier of the product category
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
       required:
         - name
         - price
-        - category
+        - productCategoryId
 
     ProductListDto:
       type: object
@@ -236,15 +235,15 @@ components: #things that are used in different parts of the spec
             - id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
               name: "Anti-gravity yarn ball"
               price: 5.99
-              category: "weapon"
+              productCategoryId: "1fa85f64-1234-4562-a3fc-2c963f66afb7"
             - id: "7fa85f64-1234-4562-a3fc-2c963f66afb7"
               name: "Space catnip treat"
               price: 3.49
-              category: "food"
+              productCategoryId: "1fa85f64-1234-4562-a3fc-2c963f66afb8"
             - id: "1fa85f64-9876-4562-c3fc-2c963f66afc8"
               name: "Rocket-shaped scratching post"
               price: 19.99
-              category: "toy"
+              productCategoryId: "1fa85f64-1234-4562-a3fc-2c963f66afb9"
 
     ProductEntryDto:
       type: object
@@ -263,10 +262,11 @@ components: #things that are used in different parts of the spec
           format: double
           description: Price of the product
           example: 5.99
-        category:
+        productCategoryId:
           type: string
-          description: Category of the product
-          example: "weapon" 
+          format: uuid
+          description: Unique identifier of the product category
+          example: "1fa85f64-1234-4562-a3fc-2c963f66afb7"
 
     ValidationError:
       type: object
@@ -410,10 +410,11 @@ components: #things that are used in different parts of the spec
         maximum: 100  
 
     CategoryParam:
-      description: Category of the product to filter by
-      name: category
+      description: UUID of the product category to filter by
+      name: productCategoryId
       in: query
       required: false
       schema:
         type: string
-        example: "weapon"     
+        format: uuid
+        example: "1fa85f64-1234-4562-a3fc-2c963f66afb7" 
