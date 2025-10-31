@@ -11,13 +11,4 @@ public class Product {
     String ProductName;
     Double ProductPrice;
     UUID ProductCategoryId;
-
-    public static Product create(String name, Double price, UUID categoryId) {
-        return Product.builder()
-            .productId(UUID.randomUUID())
-            .productName(name)
-            .productPrice(price)
-            .productCategoryId(categoryId)
-            .build();
-    }
 }

@@ -4,12 +4,14 @@ import com.example.demo.domain.Product;
 import com.example.demo.dto.product.ProductEntryDto;
 import com.example.demo.dto.product.ProductListDto;
 import com.example.demo.dto.product.ProductDto;
+import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ProductDtoMapper {
+    @Mapping(target = "productId", expression = "java(UUID.randomUUID())")
     Product toProduct(ProductDto productDto);
 
     ProductEntryDto toProductEntryDto(Product product);
