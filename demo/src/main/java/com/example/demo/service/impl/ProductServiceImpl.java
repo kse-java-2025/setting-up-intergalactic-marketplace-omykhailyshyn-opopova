@@ -2,7 +2,6 @@ package com.example.demo.service.impl;
 
 import com.example.demo.domain.Product;
 import com.example.demo.service.ProductService;
-// import com.example.demo.service.exception.ProductNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +32,6 @@ public class ProductServiceImpl implements ProductService {
         return products.stream()
             .filter(product -> product.getProductId().equals(productId))
             .findFirst() // return Optional<Product>
-            //.orElseThrow(() -> new ProductNotFoundException(productId));
     }
 
     private List<Product> buildAllProductsMock() {
@@ -74,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(UUID productId) {
-        products.removeIf(product -> product.getId().equals(productId));
+        products.removeIf(product -> product.getProductId().equals(productId));
         log.info("Product with id {} deleted", productId);
     }
 }
