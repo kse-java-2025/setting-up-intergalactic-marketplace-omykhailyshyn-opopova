@@ -1,17 +1,30 @@
-package com.example.demo.domain;
+package com.example.demo.domain.order;
 
-import java.util.UUID;
+import com.example.demo.domain.product.Product;
+import com.example.demo.common.OrderStatus;
 import lombok.Builder;
 import lombok.Value;
 import java.util.List;
-import com.example.demo.common.OrderStatus;
+import java.util.UUID;
 
 @Value
 @Builder(toBuilder = true)
 public class Order {
     UUID orderId;              
-    List<OrderEntry> orderEntries;            
+    List<Product> productEntries;            
     Double totalPrice;        
     OrderStatus orderStatus;
     UUID customerId;
+
+    // factory method to create Order from Cart
+    // just use Order orderId is bad practice ?
+    public static Order createOrderFromCart(UUID customerId, List<Product> productEntries, Double totalPrice) {
+        return Order.builder()
+                .orderId(UUID.randomUUID())
+                .customerId(customerId)
+                .productEntries(productEntries)
+                .totalPrice(totalPrice)
+                .orderStatus(OrderStatus.PENDING)
+                .build();
+    }
 }
