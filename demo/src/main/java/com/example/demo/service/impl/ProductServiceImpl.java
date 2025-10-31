@@ -28,9 +28,25 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts() {
-        log.info("Fetching all products, total count: {}", products.size());
-        return products;
+    public List<Product> getAllProducts(UUID productCategoryId, int page, int size) {
+        log.info("Fetching products - productCategoryId: {}, page: {}, size: {}", productCategoryId, page, size);
+        
+        List<Product> filteredProducts = products.stream()
+            .filter(product -> product.getProductCategoryId().equals(productCategoryId))
+            .toList();
+        
+        int startIndex = (page - 1) * size;
+        int endIndex = Math.min(startIndex + size, filteredProducts.size());
+        
+        if (startIndex >= filteredProducts.size()) {
+            log.warn("Requested page {} exceeds available data", page);
+            return List.of();
+        }
+    
+        List<Product> paginatedProducts = filteredProducts.subList(startIndex, endIndex);
+        log.info("Returning {} products out of {} total", paginatedProducts.size(), filteredProducts.size());
+        
+        return paginatedProducts;
     }
 
     @Override
@@ -54,26 +70,30 @@ public class ProductServiceImpl implements ProductService {
 
     private List<Product> buildAllProductsMock() {
         List<Product> mockProducts = new ArrayList<>();
+        
+        UUID weaponCategoryId = UUID.fromString("1fa85f64-1234-4562-a3fc-2c963f66afb7");
+        UUID foodCategoryId = UUID.fromString("1fa85f64-1234-4562-a3fc-2c963f66afb8");
+        UUID toyCategoryId = UUID.fromString("1fa85f64-1234-4562-a3fc-2c963f66afb9");
 
         mockProducts.add(Product.builder()
                 .productId(UUID.randomUUID())
                 .productName("Anti-gravity yarn ball")
                 .productPrice(10.0)
-                .productCategoryId(UUID.randomUUID())
+                .productCategoryId(weaponCategoryId)
                 .build());
 
         mockProducts.add(Product.builder()
                 .productId(UUID.randomUUID())
                 .productName("Cosmic milk")
                 .productPrice(15.5)
-                .productCategoryId(UUID.randomUUID())
+                .productCategoryId(foodCategoryId)
                 .build());
 
         mockProducts.add(Product.builder()
                 .productId(UUID.randomUUID())
                 .productName("Space catnip")
                 .productPrice(20.99)
-                .productCategoryId(UUID.randomUUID())
+                .productCategoryId(foodCategoryId)
                 .build());
 
         return mockProducts;

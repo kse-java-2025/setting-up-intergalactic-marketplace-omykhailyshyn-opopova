@@ -8,7 +8,7 @@ public interface ProductService {
 
     Product createProduct(Product product);
 
-    List<Product> getAllProducts();
+    List<Product> getAllProducts(String category, int page, int size);
 
     Product getProductById(UUID productId);
 

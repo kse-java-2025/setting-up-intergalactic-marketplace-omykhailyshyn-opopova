@@ -1,4 +1,4 @@
-package com.example.demo.domain.order;
+package com.example.demo.domain;
 
 import com.example.demo.domain.Product;
 import com.example.demo.common.OrderStatus;
