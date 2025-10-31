@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Value;
 import java.util.List;
 import java.util.UUID;
-import com.example.demo.domain.product.Product;
+import com.example.demo.domain.Product;
 
 @Value
 @Builder(toBuilder = true)

@@ -1,6 +1,6 @@
 package com.example.demo.domain.order;
 
-import com.example.demo.domain.product.Product;
+import com.example.demo.domain.Product;
 import com.example.demo.common.OrderStatus;
 import lombok.Builder;
 import lombok.Value;
