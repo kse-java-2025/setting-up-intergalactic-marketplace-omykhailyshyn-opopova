@@ -28,24 +28,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts(UUID productCategoryId, int page, int size) {
-        log.info("Fetching products - productCategoryId: {}, page: {}, size: {}", productCategoryId, page, size);
-        
+    public List<Product> getAllProducts(String productCategoryId, int page, int size) {
+        log.info("Fetching products - category: {}, page: {}, size: {}", productCategoryId, page, size);
+
+        UUID categoryUUID = UUID.fromString(productCategoryId);
         List<Product> filteredProducts = products.stream()
-            .filter(product -> product.getProductCategoryId().equals(productCategoryId))
+            .filter(product -> product.getProductCategoryId().equals(categoryUUID))
             .toList();
-        
         int startIndex = (page - 1) * size;
         int endIndex = Math.min(startIndex + size, filteredProducts.size());
-        
+
         if (startIndex >= filteredProducts.size()) {
             log.warn("Requested page {} exceeds available data", page);
             return List.of();
         }
-    
         List<Product> paginatedProducts = filteredProducts.subList(startIndex, endIndex);
         log.info("Returning {} products out of {} total", paginatedProducts.size(), filteredProducts.size());
-        
         return paginatedProducts;
     }
 
