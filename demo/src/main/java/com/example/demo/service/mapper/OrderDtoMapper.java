@@ -11,7 +11,8 @@ import java.util.UUID;
 @Mapper(componentModel = "spring", uses = ProductDtoMapper.class, imports = {UUID.class})
 public interface OrderDtoMapper {
     @Mapping(target = "orderId", expression = "java(UUID.randomUUID())")
-    
+    @Mapping(target = "orderStatus", expression = "java(com.example.demo.common.OrderStatus.PENDING)")
+    @Mapping(target = "totalPrice", ignore = true)
     Order toOrder(OrderDto dto);
 
     OrderEntryDto toOrderEntryDto(Order order);
