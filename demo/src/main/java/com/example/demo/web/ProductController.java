@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -22,10 +21,17 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<List<ProductEntryDto>> getAllProducts() {
-        List<ProductEntryDto> entries = productService.getAllProducts().stream()
+    public ResponseEntity<List<ProductEntryDto>> getAllProducts(
+            @RequestParam(required = false) String category,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        List<Product> products = productService.getAllProducts(category, page, size);
+
+        List<ProductEntryDto> entries = products.stream()
                 .map(this::toEntryDto)
                 .collect(Collectors.toList());
+
         return ResponseEntity.ok(entries);
     }
 
@@ -40,7 +46,9 @@ public class ProductController {
 
         Product created = productService.createProduct(product);
         ProductEntryDto entry = toEntryDto(created);
-        return ResponseEntity.created(URI.create("/v1/products/" + created.getProductId())).body(entry);
+
+        return ResponseEntity.created(URI.create("/v1/products/" + created.getProductId()))
+                .body(entry);
     }
 
     @GetMapping("/{productId}")
@@ -50,8 +58,10 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}")
-    public ResponseEntity<ProductEntryDto> updateProduct(@PathVariable UUID productId,
-                                                         @Valid @RequestBody ProductDto productDto) {
+    public ResponseEntity<ProductEntryDto> updateProduct(
+            @PathVariable UUID productId,
+            @Valid @RequestBody ProductDto productDto) {
+
         Product toUpdate = Product.builder()
                 .productId(productId)
                 .productName(productDto.getProductName())
