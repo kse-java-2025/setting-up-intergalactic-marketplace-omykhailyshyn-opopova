@@ -3,21 +3,18 @@ package com.example.demo.service.mapper;
 import com.example.demo.domain.Order;
 import com.example.demo.dto.order.OrderDto;
 import com.example.demo.dto.order.OrderEntryDto;
-import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import java.util.List;
+import java.util.UUID;
 
-@Mapper(componentModel = "spring", imports = {UUID.class})
+@Mapper(componentModel = "spring", uses = ProductDtoMapper.class, imports = {UUID.class})
 public interface OrderDtoMapper {
     @Mapping(target = "orderId", expression = "java(UUID.randomUUID())")
-    Order toOrder(OrderDto orderDto);
+    
+    Order toOrder(OrderDto dto);
 
-    OrderEntryDto toOrderEntryDto(Order order); // correct??
+    OrderEntryDto toOrderEntryDto(Order order);
 
-    default List<OrderEntryDto> toOrderEntryDtoList(List<Order> orders) { // correct??
-        return orders.stream()
-                .map(this::toOrderEntryDto)
-                .toList();
-    }
+    List<OrderEntryDto> toOrderEntryDtoList(List<Order> orders);
 }
