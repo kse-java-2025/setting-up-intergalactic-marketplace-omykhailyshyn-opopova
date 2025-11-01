@@ -97,11 +97,9 @@ public class ProductServiceImpl implements ProductService {
         if (productId == null) {
             throw new ValidationException("productId must not be null");
         }
-        boolean removed = products.removeIf(p -> p.getProductId().equals(productId));
-        if (!removed) {
-            throw new ProductNotFoundException(productId.toString());
-        }
-        log.info("🗑️ Product with id {} deleted", productId);
+
+        products.removeIf(p -> p.getProductId().equals(productId));
+        log.info("Product with id {} deleted (if existed)", productId);
     }
 
     private List<Product> buildAllProductsMock() {

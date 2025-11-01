@@ -1,32 +1,27 @@
 package com.example.demo.web.exception;
 
 import com.example.demo.service.exception.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import jakarta.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @ControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleProductNotFound(ProductNotFoundException ex, HttpServletRequest request) {
         ApiErrorResponse resp = ApiErrorResponse.builder()
+                .type("/errors/not-found")
+                .title("Product not found")
                 .status(HttpStatus.NOT_FOUND.value())
-                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-                .message(ex.getMessage())
-                .path(request.getRequestURI())
+                .detail("The product with ID " + ex.getMessage() + " could not be found.")
+                .instance(request.getRequestURI())
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resp);
     }
@@ -34,10 +29,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ApiErrorResponse> handleValidationError(ValidationException ex, HttpServletRequest request) {
         ApiErrorResponse resp = ApiErrorResponse.builder()
+                .type("about:blank")
+                .title("Bad Request")
                 .status(HttpStatus.BAD_REQUEST.value())
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message(ex.getMessage())
-                .path(request.getRequestURI())
+                .detail(ex.getMessage())
+                .instance(request.getRequestURI())
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resp);
     }
@@ -45,41 +41,28 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InternalServerErrorException.class)
     public ResponseEntity<ApiErrorResponse> handleInternalServerError(InternalServerErrorException ex, HttpServletRequest request) {
         ApiErrorResponse resp = ApiErrorResponse.builder()
+                .type("/errors/internal-server-error")
+                .title("Internal Server Error")
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-                .message(ex.getMessage())
-                .path(request.getRequestURI())
+                .detail("An unexpected error occurred on the server.")
+                .instance(request.getRequestURI())
                 .build();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resp);
     }
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                                                  HttpHeaders headers,
-                                                                  HttpStatusCode status,
-                                                                  WebRequest request) {
-        List<ApiErrorResponse.FieldErrorDetail> details = ex.getBindingResult().getFieldErrors().stream()
-                .map(err -> ApiErrorResponse.FieldErrorDetail.builder()
-                        .field(err.getField())
-                        .reason(err.getDefaultMessage())
-                        .build())
-                .collect(Collectors.toList());
-
-        String first = details.isEmpty()
-                ? "Validation failed"
-                : String.format("Field '%s' %s", details.get(0).getField(), details.get(0).getReason());
-
-        String message = String.format("Validation failed for object '%s': %s",
-                ex.getBindingResult().getObjectName(), first);
-
-        String path = request.getDescription(false).replace("uri=", "");
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiErrorResponse> handleValidation(MethodArgumentNotValidException ex, WebRequest request) {
+        String field = ex.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(err -> String.format("Field '%s' %s", err.getField(), err.getDefaultMessage()))
+                .orElse("Validation failed");
 
         ApiErrorResponse resp = ApiErrorResponse.builder()
+                .type("about:blank")
+                .title("Bad Request")
                 .status(HttpStatus.BAD_REQUEST.value())
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message(message)
-                .path(path)
-                .details(details)
+                .detail(field)
+                .instance(request.getDescription(false).replace("uri=", ""))
                 .build();
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resp);
