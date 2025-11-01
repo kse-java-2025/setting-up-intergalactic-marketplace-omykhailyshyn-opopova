@@ -9,7 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", imports = {UUID.class})
 public interface ProductDtoMapper {
     @Mapping(target = "productId", expression = "java(UUID.randomUUID())")
     Product toProduct(ProductDto productDto);

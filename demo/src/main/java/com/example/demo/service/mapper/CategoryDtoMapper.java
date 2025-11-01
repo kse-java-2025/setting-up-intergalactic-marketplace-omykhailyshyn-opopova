@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", imports = {UUID.class})
 public interface CategoryDtoMapper {
     @Mapping(target = "categoryId", expression = "java(UUID.randomUUID())")
     Category toCategory(CategoryDto categoryDto);

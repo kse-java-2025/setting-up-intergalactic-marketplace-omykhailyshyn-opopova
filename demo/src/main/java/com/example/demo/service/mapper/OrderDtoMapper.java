@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", imports = {UUID.class})
 public interface OrderDtoMapper {
     @Mapping(target = "orderId", expression = "java(UUID.randomUUID())")
     Order toOrder(OrderDto orderDto);
