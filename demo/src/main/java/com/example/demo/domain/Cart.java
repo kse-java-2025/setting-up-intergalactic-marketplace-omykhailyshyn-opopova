@@ -10,7 +10,7 @@ import com.example.demo.domain.Product;
 @Builder(toBuilder = true)
 public class Cart {
     UUID cartId;
-    List<Product> productEntries;
-    Double totalPrice;
     UUID customerId;
+    Product product;
+    Double totalPrice;
 }

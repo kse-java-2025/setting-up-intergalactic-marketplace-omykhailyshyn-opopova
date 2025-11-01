@@ -1,18 +1,17 @@
 package com.example.demo.dto.cart;
 
+import com.example.demo.dto.product.ProductEntryDto;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
-import java.util.List;
 import java.util.UUID;
-import com.example.demo.dto.product.ProductDto;
 
 @Value
-@Builder(toBuilder = true)
+@Builder
 @Jacksonized
-public class CartResponseDto {
+public class CartEntryDto {
     UUID cartId;
-    List<ProductDto> productEntries;
-    Double totalPrice;
     UUID customerId;
+    ProductEntryDto product;
+    Double totalPrice;
 }
